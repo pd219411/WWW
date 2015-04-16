@@ -1,0 +1,35 @@
+#geo-chart resolution: provinces
+#region codes from wiki
+
+
+virtualenv e2
+
+source e2/bin/activate
+
+pip install beautifulsoup
+pip freeze #format mozna kopiowac, zeby przeniesc srodowisko pomiedzy maszynami
+pip list
+
+
+django-admin startproject
+./manage.py runserver
+
+sqlite3 db.sqlite3
+./manage.py syncdb
+
+settings.py <- INSTALLED_APPS add folder
+
+./manage.py check
+./manage.py migrations ?
+
+./manage shell
+
+pip install django-debug-toolbar
+
+
+#WAZNE
+
+ln -s /usr/lib64/python2.7/lib-dynload/pyexpat.so
+
+#port forward jesli django serwer odpalam na students a chcialbym ogladac z domu
+ssh -L 5555:localhost:8000 pd219411@students.mimuw.edu.pl
