@@ -33,3 +33,6 @@ ln -s /usr/lib64/python2.7/lib-dynload/pyexpat.so
 
 #port forward jesli django serwer odpalam na students a chcialbym ogladac z domu
 ssh -L 5555:localhost:8000 pd219411@students.mimuw.edu.pl
+
+# kodowanie przy zapisie do pliku
+PYTHONIOENCODING=UTF-8 python downloader.py > <file>

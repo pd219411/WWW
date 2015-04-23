@@ -44,6 +44,7 @@ def data_from_url(url):
 	return extract_data_from_html(soup_html_from_url(url))
 
 def crawl_page(base_url, file_url, level, location):
+	separator = "@"
 	page_url = urlparse.urljoin(directory_url, file_url)
 
 	data = data_from_url(page_url)
@@ -53,7 +54,7 @@ def crawl_page(base_url, file_url, level, location):
 		for (link, info) in data:
 			(name, votes) = info
 			#location_subzone = location + ", " + name + ", " + link
-			location_subzone = location + ", " + name
+			location_subzone = location + separator + name
 			crawl_page(base_url, link, level + 1, location_subzone)
 
 if __name__ == "__main__":
