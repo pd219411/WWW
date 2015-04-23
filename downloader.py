@@ -56,4 +56,5 @@ def crawl_page(base_url, file_url, level, location):
 			location_subzone = location + ", " + name
 			crawl_page(base_url, link, level + 1, location_subzone)
 
-crawl_page(directory_url, file_url, 0, "Polska")
+if __name__ == "__main__":
+	crawl_page(directory_url, file_url, 0, "Polska")
