@@ -1,0 +1,38 @@
+{% if lista_obwodow %}
+	<h1>{{ gmina.nazwa }}</h1>
+	<!--
+	<ul>
+	{% for obwod in lista_obwodow %}
+		<li>{{ obwod.nazwa }}</li>
+	{% endfor %}
+	</ul>
+	-->
+	<form action="{% url 'wybory:zmiana' gmina.nazwa %}" method="post">
+	<fieldset>
+	{% csrf_token %}
+	<table>
+	<thead>
+		<tr>
+			<td>Nazwa</td>
+			<td>Kart do glosowania</td>
+			<td>Wyborcow</td>
+		</tr>
+	</thead>
+	<tbody>
+	{% for obwod in lista_obwodow %}
+		<input type="hidden" name="id" value="{{ obwod.id }}">
+		<input type="hidden" name="data_modyfikacji" value="{{ obwod.data_modyfikacji }}">
+		<tr>
+			<td>{{ obwod.nazwa }}</td>
+			<td><input type="text" name="kart_do_glosowania" value="{{ obwod.kart_do_glosowania }}"></td>
+			<td><input type="text" name="wyborcow" value="{{ obwod.wyborcow }}"></td>
+		</tr>
+	{% endfor %}
+	</tbody>
+	</table>
+	<input type="submit" value="Zapisz" />
+	</fieldset>
+	</form>
+{% else %}
+	<p>Brak obwodow!</p>
+{% endif %}

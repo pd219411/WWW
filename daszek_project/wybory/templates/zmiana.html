@@ -1,0 +1,7 @@
+
+<ul>
+{% for zmiana in lista_zmian %}
+	<li>{{ zmiana }}</li>
+{% endfor %}
+</ul>
+<a href="{% url 'wybory:obwody' gmina.nazwa %}">{{ gmina.nazwa }}</a>

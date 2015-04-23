@@ -1,0 +1,9 @@
+{% if lista_gmin %}
+	<ul>
+	{% for gmina in lista_gmin %}
+		<li><a href="{% url 'wybory:obwody' gmina.nazwa %}">{{ gmina.nazwa }}</a></li>
+	{% endfor %}
+	</ul>
+{% else %}
+	<p>Brak gmin!</p>
+{% endif %}
