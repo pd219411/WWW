@@ -36,3 +36,5 @@ ssh -L 5555:localhost:8000 pd219411@students.mimuw.edu.pl
 
 # kodowanie przy zapisie do pliku
 PYTHONIOENCODING=UTF-8 python downloader.py > <file>
+
+https://docs.djangoproject.com/en/1.8/howto/custom-template-tags/
