@@ -35,6 +35,20 @@
 	<input type="submit" value="Zapisz" />
 	</fieldset>
 	</form>
+
+	<!-- <form action="{% url 'wybory:zmiana_ajax' gmina.nazwa %}" method="post" id="TEST-AJAX-DUPA"> -->
+	<form name="AJAX_FORM" action="{% url 'wybory:zmiana_ajax' gmina.nazwa %}" method="post">
+		{% csrf_token %}
+		<input name="test" type="text" value="500">
+		<input name="submit-button" type="submit" value="Zapisz" />
+		<span name="STATUS" class="success"></span>
+	</form>
+<!--
+	<button onclick="zmiana111()">ZMIANA 111</button>
+	<button onclick="zmiana222()">ZMIANA 222</button>
+-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="{{ STATIC_URL }}/static/main.js"></script>
 {% else %}
 	<p>Brak obwodow!</p>
 {% endif %}

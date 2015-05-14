@@ -1,3 +1,5 @@
+import json
+
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 #from django.template import RequestContext, loader
@@ -76,6 +78,7 @@ def zmiana_obwodu(id, data_modyfikacji, kart_do_glosowania, wyborcow):
 def zmiana(request, nazwa_gminy):
 	gmina = get_object_or_404(Gmina, pk = nazwa_gminy)
 
+	print "DASZEK POST: ", request.POST
 	#TODO: check those lists have the same length
 	l1 = request.POST.getlist('id')
 	l2 = request.POST.getlist('data_modyfikacji')
@@ -100,3 +103,23 @@ def zmiana(request, nazwa_gminy):
 		})
 	else:
 		return HttpResponseRedirect(reverse('wybory:obwody', kwargs = {'nazwa_gminy': nazwa_gminy}))
+
+
+from django.http import Http404
+from time import sleep
+
+def zmiana_ajax(request, nazwa_gminy):
+	sleep(0.5)
+
+	print "MY REQUEST ", request.POST
+	response_data = {}
+	response_data['result'] = 5000
+	print request.POST.get('test')
+	test_int = int(request.POST.get('test'))
+	if test_int > 99:
+		raise Http404
+	elif test_int > 9:
+		response_data['success'] = True
+	else:
+		response_data['success'] = False
+	return HttpResponse(json.dumps(response_data), content_type="application/json")
