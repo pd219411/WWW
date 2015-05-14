@@ -1,29 +1,12 @@
-#import datetime
-#from django.utils import timezone
-
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 #from django.template import RequestContext, loader
 from django.shortcuts import get_object_or_404, render
-
 from django.views import generic
 
 from .models import Gmina, Obwod
 
-#def my_timestamp_format():
-#	return "%c %z"
-
-#class UTC(datetime.tzinfo):
-#	"""UTC"""
-
-#	def utcoffset(self, dt):
-#		return datetime.timedelta(0)
-
-#	def tzname(self, dt):
-#		return "UTC"
-
-#	def dst(self, dt):
-#		return datetime.timedelta(0)
+import wybory.daszek_common
 
 class GminyView(generic.ListView):
 	template_name = 'gminy.html'
@@ -36,8 +19,6 @@ def obwody(request, nazwa_gminy):
 	gmina = get_object_or_404(Gmina, pk = nazwa_gminy)
 	obwody = Obwod.objects.filter(gmina = nazwa_gminy)
 	return render(request, 'obwody.html', {
-		#'teraz' : datetime.date.strftime(datetime.datetime.now(tz=UTC()), my_timestamp_format()),
-		#'teraz' : timezone.now(),
 		'gmina' : gmina,
 		'lista_obwodow' : obwody,
 	});
@@ -75,21 +56,15 @@ def zmiana_obwodu(id, data_modyfikacji, kart_do_glosowania, wyborcow):
 				update = True
 		if update:
 			try:
-				print data_modyfikacji
-				print obwod.data_modyfikacji
-				data_modyfikacji_string = str(obwod.data_modyfikacji)
-				#data_modyfikacji_date_time = datetime.datetime.strptime(data_modyfikacji, my_timestamp_format())
-
-				#TODO: what is going on with dates!?
-				#if data_modyfikacji_string == data_modyfikacji:
-				if True:
+				obwod_data_modyfikacji_string = wybory.daszek_common.datetime_to_string(obwod.data_modyfikacji)
+				if obwod_data_modyfikacji_string == data_modyfikacji:
 					obwod.save()
 				else:
 					error = True
-					message += ["Dane zostaly zmienione od ostatniego odczytu. Odczyt: " + data_modyfikacji + " Ostatnia zmiana: " + data_modyfikacji_string]
-			except ValueError:
+					message += ["Dane zostaly zmienione od ostatniego odczytu. Odczyt: " + data_modyfikacji + " Ostatnia zmiana: " + obwod_data_modyfikacji_string]
+			except ValueError as e:
 				error = True
-				message += ["Bledna data modyfikacji: " + data_modyfikacji]
+				message += ["Bledna data modyfikacji: " + data_modyfikacji + " " + str(e)]
 	except Obwod.DoesNotExist:
 		error = True
 		message += ["Nie istnieje obwod: " + id]
@@ -108,20 +83,20 @@ def zmiana(request, nazwa_gminy):
 	l4 = request.POST.getlist('wyborcow')
 
 	lista_zmian = []
+	error_occured = False
 
 	for id, data_modyfikacji, kart_do_glosowania, wyborcow in zip(l1, l2, l3, l4):
 		(e, u, m) = zmiana_obwodu(id, data_modyfikacji, kart_do_glosowania, wyborcow)
 		print (e, u, m)
+		if e:
+			error_occured = True
 		lista_zmian += m
 
 	print lista_zmian
-
-	return render(request, 'zmiana.html', {
-		'gmina' : gmina,
-		'lista_zmian' : lista_zmian,
-	});
-
-	# Always return an HttpResponseRedirect after successfully dealing
-	# with POST data. This prevents data from being posted twice if a
-	# user hits the Back button.
-	#return HttpResponseRedirect(reverse('polls:results', args=(p.id,)))
+	if error_occured:
+		return render(request, 'zmiana.html', {
+			'gmina' : gmina,
+			'lista_zmian' : lista_zmian,
+		})
+	else:
+		return HttpResponseRedirect(reverse('wybory:obwody', kwargs = {'nazwa_gminy': nazwa_gminy}))

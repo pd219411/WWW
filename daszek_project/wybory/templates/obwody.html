@@ -23,7 +23,7 @@
 	<tbody>
 	{% for obwod in lista_obwodow %}
 		<input type="hidden" name="id" value="{{ obwod.id }}">
-		<input type="hidden" name="data_modyfikacji" value="{{ obwod.data_modyfikacji }}">
+		<input type="hidden" name="data_modyfikacji" value="{{ obwod.data_modyfikacji|daszek_modification_timestamp }}">
 		<tr>
 			<td>{{ obwod.nazwa }}</td>
 			<td><input type="text" name="kart_do_glosowania" value="{{ obwod.kart_do_glosowania }}"></td>
