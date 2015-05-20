@@ -1,4 +1,7 @@
 {% load daszek_extra_tags %}
+<head>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/static/obwody.css">
+</head>
 
 {% if lista_obwodow %}
 	<h1>{{ gmina.nazwa }}</h1>
@@ -35,6 +38,60 @@
 	<input type="submit" value="Zapisz" />
 	</fieldset>
 	</form>
+
+<!--
+With AJAX
+-->
+
+<div id="ajax-urls" data-query="{% url 'wybory:zapytanie_ajax' gmina.nazwa %}"></div>
+
+<table>
+<thead>
+	<tr>
+		<td>Nazwa</td>
+		<td>Kart do glosowania</td>
+		<td>Wyborcow</td>
+		<td></td>
+		<td></td>
+	</tr>
+</thead>
+<tbody>
+{% for obwod in lista_obwodow %}
+<tr class="editrow" data-id="{{ obwod.id }}">
+	<input type="hidden" name="data_modyfikacji" value="{{ obwod.data_modyfikacji|daszek_modification_timestamp }}">
+
+	<td name="nazwa">{{ obwod.nazwa }}</td>
+<!--
+	<td name="kart_do_glosowania">{{ obwod.kart_do_glosowania }}</td>
+	<td name="wyborcow">{{ obwod.wyborcow }}</td>
+-->
+	<td name="kart_do_glosowania"><input type="text" value="{{ obwod.kart_do_glosowania }}" disabled></td>
+
+	<td name="wyborcow"><input type="text" value="{{ obwod.wyborcow }}" disabled></td>
+
+	<td name="button1">
+		<button name="editbutton" class="daszek_hidden">Edytuj</button>
+	</td>
+
+	<td name="button2">
+		<button name="editspan2" class="daszek_hidden">Placeholder</button>
+	</td>
+</tr>
+
+<!--
+	<input type="hidden" name="id" value="{{ obwod.id }}">
+	<input type="hidden" name="data_modyfikacji" value="{{ obwod.data_modyfikacji|daszek_modification_timestamp }}">
+	<tr>
+		<td>{{ obwod.nazwa }}</td>
+		<td><input type="text" name="kart_do_glosowania" value="{{ obwod.kart_do_glosowania }}"></td>
+		<td><input type="text" name="wyborcow" value="{{ obwod.wyborcow }}"></td>
+		<td><span name="editspan" style="visibility: hidden">Edytuj</span></td>
+	</tr>
+-->
+{% endfor %}
+</tbody>
+</table>
+
 
 	<!-- <form action="{% url 'wybory:zmiana_ajax' gmina.nazwa %}" method="post" id="TEST-AJAX-DUPA"> -->
 	<form name="AJAX_FORM" action="{% url 'wybory:zmiana_ajax' gmina.nazwa %}" method="post">

@@ -108,6 +108,21 @@ def zmiana(request, nazwa_gminy):
 from django.http import Http404
 from time import sleep
 
+def zapytanie_ajax(request, nazwa_gminy):
+	print "ZAPYTANIE ", request.POST
+	id = request.POST.get('id')
+	print id
+	obwod = get_object_or_404(Obwod, pk = id)
+	print obwod
+
+	response_data = {}
+	response_data['data_modyfikacji'] = wybory.daszek_common.datetime_to_string(obwod.data_modyfikacji)
+	response_data['kart_do_glosowania'] = obwod.kart_do_glosowania
+	response_data['wyborcow'] = obwod.wyborcow
+	print response_data
+
+	return HttpResponse(json.dumps(response_data), content_type="application/json")
+
 def zmiana_ajax(request, nazwa_gminy):
 	sleep(0.5)
 
