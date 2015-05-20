@@ -46,81 +46,9 @@ $.ajaxSetup({
 
 // END OF COPY-PASTE ===========================================================
 
+var loading;
+var ajax_requests = 0;
 
-$("form[name=AJAX_FORM]").on('submit', function(event) {
-	event.preventDefault();
-	console.log("on_submit()");
-	$form = $(this);
-	create_post($form);
-});
-
-// AJAX for posting
-function create_post(form) {
-	console.log("create_post()");
-	console.log(csrftoken);
-	console.log($form.attr('action'));
-	$url = $form.attr('action');
-	var $text = $form.find('#TEST-AJAX-TEXT');
-	var post_data = $form.serialize();
-
-	disable_buttons($form);
-
-	$.ajax({
-		url : $url,
-		type : "POST",
-		data : post_data,
-		//TODO: does not work complete : enable_buttons($form),
-		success : handle_success.bind($form),
-		error : handle_error.bind($form)
-	});
-};
-
-function handle_success(json) {
-	console.log("handle_success");
-	console.log(json);
-
-	enable_buttons(this);
-	if (json.success) {
-		status_success(this);
-	} else {
-		status_error(this);
-	}
-}
-
-function handle_error(xhr, errmsg, err) {
-	console.log("handle_error");
-	console.log(xhr.status + " : " + xhr.responseText);
-
-	enable_buttons(this);
-	status_error(this);
-	//$('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+ " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-}
-
-function status_success($form) {
-	var $temp = $form.find("[name='STATUS']");
-	//var $temp = $("#TEST-AJAX-STATUS");
-	$temp.html("Success");
-}
-
-function status_error($form) {
-	//var temp = document.getElementById("TEST-AJAX-STATUS");
-	//temp.innerHTML = "Error!";
-	var $temp = $form.find("[name='STATUS']");
-	$temp.html("Error!");
-}
-
-function disable_buttons($form) {
-	var $temp = $form.find("[name='submit-button']");
-	$temp.attr("disabled", true);
-}
-
-function enable_buttons($form) {
-	var $temp = $form.find("[name='submit-button']");
-	$temp.attr("disabled", false);
-}
-
-
-///////////////////////////
 
 function EditButtonName() {
 	return "editbutton";
@@ -138,6 +66,10 @@ function GetEditButton($row) {
 	return $row.find("[name=" + EditButtonName() + "]");
 }
 
+function GetCancelButton($row) {
+	return $row.find("[name=" + CancelButtonName() + "]");
+}
+
 function GetDataModyfikacji($row) {
 	return $row.find("[name=data_modyfikacji]");
 }
@@ -148,6 +80,32 @@ function GetKartDoGlosowania($row) {
 
 function GetWyborcow($row) {
 	return $row.find("[name=wyborcow]").find("input");
+}
+
+function SetStatus($row, success, status_message) {
+	var $temp = $row.find("[name=status]").find("div");
+	console.log($temp);
+	$temp.html(status_message);
+	if (success) {
+		$temp.attr("class", "daszek_success");
+	} else {
+		$temp.attr("class", "daszek_failure");
+	}
+}
+
+function AjaxStart() {
+	++ajax_requests;
+	if (ajax_requests == 1) {
+		loading.play();
+	}
+}
+
+function AjaxComplete() {
+	--ajax_requests;
+	if (ajax_requests == 0) {
+		loading.stop();
+		loading.canvas.getContext('2d').clearRect(0, 0, loading.canvas.width, loading.canvas.height);
+	}
 }
 
 function GetUrlsDiv() {
@@ -163,14 +121,16 @@ function submit_url() {
 }
 
 function disable_edit($row) {
-			GetKartDoGlosowania($row).attr("disabled", true);
-			GetWyborcow($row).attr("disabled", true);
+			GetKartDoGlosowania($row).attr("readonly", true);
+			GetWyborcow($row).attr("readonly", true);
 
 			var $submit = $row.find("[name=button2]").find("button");
 			$submit.attr("class", "daszek_hidden");
 
 			var $cancel = $row.find("[name=button3]").find("button");
 			$cancel.attr("class", "daszek_hidden");
+
+			$row.attr("data-readonly", "true");
 }
 
 function enable_edit($row, json) {
@@ -179,12 +139,12 @@ function enable_edit($row, json) {
 			console.log(GetDataModyfikacji($row).attr("value"));
 
 			var $temp = GetKartDoGlosowania($row);
-			$temp.attr("value", json["kart_do_glosowania"]);
-			$temp.attr("disabled", false);
+			$temp.val(json["kart_do_glosowania"]);
+			$temp.attr("readonly", false);
 
 			$temp = GetWyborcow($row);
-			$temp.attr("value", json["wyborcow"]);
-			$temp.attr("disabled", false);
+			$temp.val(json["wyborcow"]);
+			$temp.attr("readonly", false);
 
 			var $edit = $row.find("[name=button1]").find("button");
 			$edit.attr("class", "daszek_hidden");
@@ -198,6 +158,8 @@ function enable_edit($row, json) {
 			$cancel.attr("name", CancelButtonName());
 			$cancel.html("Anuluj");
 			$cancel.attr("class", "daszek_visible");
+
+			$row.removeAttr("data-readonly");
 }
 
 
@@ -206,58 +168,74 @@ function query_post($row) {
 	var post_data = {};
 	post_data["id"] = obwod_id;
 
+	AjaxStart();
 
 	$.ajax({
 		url : query_url(),
 		type : "POST",
 		data : post_data,
 		success : function(json) {
-			console.log("handle_success");
+			console.log("handle_success query");
 			console.log(json);
 			enable_edit($row, json);
+			SetStatus($row, true, "OK");
+			AjaxComplete();
 		},
 		error : function(xhr, errmsg, err) {
-			console.log("handle_error");
+			console.log("handle_error query");
+			SetStatus($row, false, errmsg + " " + err);
+			AjaxComplete();
 		}
 	});
 };
 
 function submit_post($row) {
 	var obwod_id = $row.attr("data-id");
-	//var post_data = { id: obwod_id, data_modyfikacji : GetDataModyfikacji };
+
+	AjaxStart();
+
 	var post_data = {};
 	post_data["id"] = obwod_id;
 	post_data["data_modyfikacji"] = GetDataModyfikacji($row).val();
 	post_data["kart_do_glosowania"] = GetKartDoGlosowania($row).val();
 	post_data["wyborcow"] = GetWyborcow($row).val();
-	console.log(post_data);
 
 	$.ajax({
 		url : submit_url(),
 		type : "POST",
 		data : post_data,
 		success : function(json) {
-			console.log("handle_success");
+			console.log("handle_success submit");
 			console.log(json);
-			disable_edit($row, json);
-			//TODO: disable edit and set stat
+			disable_edit($row);
+			if (json["success"]) {
+				SetStatus($row, true, "OK");
+			} else {
+				SetStatus($row, false, "TODO: message from json");
+			}
+			AjaxComplete();
 		},
 		error : function(xhr, errmsg, err) {
-			console.log("handle_error");
-			//TODO: disable edit and set status
+			console.log("handle_error submit");
+			disable_edit($row);
+			SetStatus($row, false, errmsg + " " + err);
+			AjaxComplete();
 		}
 	});
 };
 
 $("tr.editrow").mouseover(function() {
-	var $temp = GetEditButton($(this));
-	console.log($temp);
-	$temp.attr("class", "daszek_visible");
+	if ($(this).attr("data-readonly")) {
+		var $temp = GetEditButton($(this));
+		$temp.attr("class", "daszek_visible");
+	}
 });
 
 $("tr.editrow").mouseout(function() {
-	var $temp = GetEditButton($(this));
-	$temp.attr("class", "daszek_hidden");
+	if ($(this).attr("data-readonly")) {
+		var $temp = GetEditButton($(this));
+		$temp.attr("class", "daszek_hidden");
+	}
 });
 
 $("button[name=" + EditButtonName() + "]").on('click', function(event) {
@@ -275,14 +253,31 @@ $("tr.editrow").on('click', "[name=" + CancelButtonName() + "]", function(event)
 	disable_edit($(this).closest("tr.editrow"));
 });
 
+///////////////////////
+$(document).ready(function() {
+	loading = new Sonic({
+		width: 100,
+		height: 40,
+		padding: 5,
 
-//$("row_entryform[name=AJAX_FORM]").on('submit', function(event) {
-//$(this).button show
-//}
+		stepsPerFrame: 5,
+		trailLength: 1,
+		pointDistance: .01,
+		strokeColor: '#00CC00',
+		step: 'fader',
+		multiplier: 2,
 
-//static -> form
-//1) span <-> hidden input
-//2) tr wymienic na nowy wiersz z serwera
+		setup: function() {
+			this._.lineWidth = 5;
+		},
 
-//fill form
-//1) edytuj zaciaga z serwera AJAXem
+		path: [
+			['arc', 10, 10, 10, -270, -90],
+			['bezier', 10, 0, 40, 20, 20, 0, 30, 20],
+			['arc', 40, 10, 10, 90, -90],
+			['bezier', 40, 0, 10, 20, 30, 0, 20, 20]
+		]
+	});
+
+	document.body.appendChild(loading.canvas);
+});

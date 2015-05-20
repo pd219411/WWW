@@ -60,7 +60,7 @@ With AJAX
 </thead>
 <tbody>
 {% for obwod in lista_obwodow %}
-<tr class="editrow" data-id="{{ obwod.id }}">
+<tr class="editrow" data-id="{{ obwod.id }}" data-readonly="true">
 	<input type="hidden" name="data_modyfikacji" value="{{ obwod.data_modyfikacji|daszek_modification_timestamp }}">
 
 	<td name="nazwa">{{ obwod.nazwa }}</td>
@@ -68,9 +68,9 @@ With AJAX
 	<td name="kart_do_glosowania">{{ obwod.kart_do_glosowania }}</td>
 	<td name="wyborcow">{{ obwod.wyborcow }}</td>
 -->
-	<td name="kart_do_glosowania"><input type="text" value="{{ obwod.kart_do_glosowania }}" disabled></td>
+	<td name="kart_do_glosowania"><input type="text" value="{{ obwod.kart_do_glosowania }}" readonly></td>
 
-	<td name="wyborcow"><input type="text" value="{{ obwod.wyborcow }}" disabled></td>
+	<td name="wyborcow"><input type="text" value="{{ obwod.wyborcow }}" readonly></td>
 
 	<td name="button1">
 		<button name="editbutton" class="daszek_hidden">Edytuj</button>
@@ -84,38 +84,21 @@ With AJAX
 		<button name="placeholder3" class="daszek_hidden">Anuluj</button>
 	</td>
 
-	<td name="status"></td>
+	<td name="status"><div class="daszek_success"></div></td>
 
 </tr>
 
-<!--
-	<input type="hidden" name="id" value="{{ obwod.id }}">
-	<input type="hidden" name="data_modyfikacji" value="{{ obwod.data_modyfikacji|daszek_modification_timestamp }}">
-	<tr>
-		<td>{{ obwod.nazwa }}</td>
-		<td><input type="text" name="kart_do_glosowania" value="{{ obwod.kart_do_glosowania }}"></td>
-		<td><input type="text" name="wyborcow" value="{{ obwod.wyborcow }}"></td>
-		<td><span name="editspan" style="visibility: hidden">Edytuj</span></td>
-	</tr>
--->
 {% endfor %}
 </tbody>
 </table>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://raw.githubusercontent.com/padolsey/sonic.js/master/src/sonic.js"></script>
 
-	<!-- <form action="{% url 'wybory:zmiana_ajax' gmina.nazwa %}" method="post" id="TEST-AJAX-DUPA"> -->
-	<form name="AJAX_FORM" action="{% url 'wybory:zmiana_ajax' gmina.nazwa %}" method="post">
-		{% csrf_token %}
-		<input name="test" type="text" value="500">
-		<input name="submit-button" type="submit" value="Zapisz" />
-		<span name="STATUS" class="success"></span>
-	</form>
-<!--
-	<button onclick="zmiana111()">ZMIANA 111</button>
-	<button onclick="zmiana222()">ZMIANA 222</button>
--->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-	<script src="{{ STATIC_URL }}/static/main.js"></script>
+<script src="{{ STATIC_URL }}/static/main.js"></script>
+
+
+
 {% else %}
 	<p>Brak obwodow!</p>
 {% endif %}

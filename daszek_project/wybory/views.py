@@ -120,7 +120,7 @@ def zapytanie_ajax(request, nazwa_gminy):
 	response_data['kart_do_glosowania'] = obwod.kart_do_glosowania
 	response_data['wyborcow'] = obwod.wyborcow
 	print response_data
-
+	sleep(0.3)
 	return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 def zmiana_ajax(request, nazwa_gminy):
@@ -137,13 +137,10 @@ def zmiana_ajax(request, nazwa_gminy):
 	print (e, u, m)
 
 	response_data = {}
-	response_data['result'] = 5000
-	print request.POST.get('test')
-	test_int = int(request.POST.get('test'))
-	if test_int > 99:
-		raise Http404
-	elif test_int > 9:
-		response_data['success'] = True
-	else:
+
+	if e:
 		response_data['success'] = False
+	else:
+		response_data['success'] = True
+
 	return HttpResponse(json.dumps(response_data), content_type="application/json")

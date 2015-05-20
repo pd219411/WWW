@@ -18,12 +18,11 @@ button:active {
 }
 
 /*
-input[disabled="disabled"] {
-*/
-input[disabled] {
+input[readonly] {
 	background-color:#F0F0F0 !important; 
 	color:#303030 !important;
 }
+*/
 
 button.daszek_hidden {
 	visibility: hidden;
@@ -31,4 +30,14 @@ button.daszek_hidden {
 
 button.daszek_visible {
 	visibility: visible;
+}
+
+div.daszek_failure {
+	background-color: #CC0000;
+	color: #FFFFFF;
+}
+
+div.daszek_success {
+	background-color: #2db34a;
+	color: #FFFFFF;
 }
