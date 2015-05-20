@@ -124,9 +124,18 @@ def zapytanie_ajax(request, nazwa_gminy):
 	return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 def zmiana_ajax(request, nazwa_gminy):
+	print "ZMIANA ", request.POST
+
 	sleep(0.5)
 
-	print "MY REQUEST ", request.POST
+	id = request.POST.get('id')
+	data_modyfikacji = request.POST.get('data_modyfikacji')
+	kart_do_glosowania = request.POST.get('kart_do_glosowania')
+	wyborcow = request.POST.get('wyborcow')
+
+	(e, u, m) = zmiana_obwodu(id, data_modyfikacji, kart_do_glosowania, wyborcow)
+	print (e, u, m)
+
 	response_data = {}
 	response_data['result'] = 5000
 	print request.POST.get('test')

@@ -43,7 +43,8 @@
 With AJAX
 -->
 
-<div id="ajax-urls" data-query="{% url 'wybory:zapytanie_ajax' gmina.nazwa %}"></div>
+<div id="ajax-urls" data-query="{% url 'wybory:zapytanie_ajax' gmina.nazwa %}"
+	data-submit="{% url 'wybory:zmiana_ajax' gmina.nazwa %}"></div>
 
 <table>
 <thead>
@@ -51,6 +52,8 @@ With AJAX
 		<td>Nazwa</td>
 		<td>Kart do glosowania</td>
 		<td>Wyborcow</td>
+		<td></td>
+		<td></td>
 		<td></td>
 		<td></td>
 	</tr>
@@ -74,8 +77,15 @@ With AJAX
 	</td>
 
 	<td name="button2">
-		<button name="editspan2" class="daszek_hidden">Placeholder</button>
+		<button name="placeholder2" class="daszek_hidden">Zapisz</button>
 	</td>
+
+	<td name="button3">
+		<button name="placeholder3" class="daszek_hidden">Anuluj</button>
+	</td>
+
+	<td name="status"></td>
+
 </tr>
 
 <!--
