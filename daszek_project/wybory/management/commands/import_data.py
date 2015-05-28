@@ -1,12 +1,14 @@
 from django.core.management.base import BaseCommand, CommandError
-from wybory.models import Gmina, Obwod
+#from wybory.models import Gmina, Obwod
 
-def add_item(nazwa_gminy, nazwa_obwodu):
-	print "aDD", nazwa_gminy, nazwa_obwodu
-	gmina = Gmina(nazwa = nazwa_gminy)
-	gmina.save()
-	obwod = Obwod(gmina = gmina, nazwa = nazwa_obwodu, kart_do_glosowania = 0, wyborcow = 0)
-	obwod.save()
+import wybory.daszek_common
+
+#def add_item(nazwa_gminy, nazwa_obwodu):
+	#print "aDD", nazwa_gminy, nazwa_obwodu
+	#gmina = Gmina(nazwa = nazwa_gminy)
+	#gmina.save()
+	#obwod = Obwod(gmina = gmina, nazwa = nazwa_obwodu, kart_do_glosowania = 0, wyborcow = 0)
+	#obwod.save()
 
 class Command(BaseCommand):
 	help = 'Populates database with data'
@@ -25,26 +27,17 @@ class Command(BaseCommand):
 				gmina = ' '.join(line_split[:-1])
 				obwod = line_split[-1]
 
-				add_item(gmina, obwod)
+				wybory.daszek_common.add_item(gmina, obwod)
 
 		return
-		gmina = Gmina(nazwa = 'TestGmina')
-		gmina.save()
+		#gmina = Gmina(nazwa = 'TestGmina')
+		#gmina.save()
 
-		obwod1 = Obwod(gmina = gmina, nazwa = "obwod1", kart_do_glosowania = 2, wyborcow = 1)
-		obwod1.save()
+		#obwod1 = Obwod(gmina = gmina, nazwa = "obwod1", kart_do_glosowania = 2, wyborcow = 1)
+		#obwod1.save()
 
-		gminy = Gmina.objects.all()
-		print gminy
+		#gminy = Gmina.objects.all()
+		#print gminy
 
-		obwody = Obwod.objects.all()
-		print obwody
-
-#		for poll_id in options['poll_id']:
-#			try:
-#				poll = Poll.objects.get(pk=poll_id)
-#			except Poll.DoesNotExist:
-#				raise CommandError('Poll "%s" does not exist' % poll_id)
-#			poll.opened = False
-#			poll.save()
-#			self.stdout.write('Successfully closed poll "%s"' % poll_id)
+		#obwody = Obwod.objects.all()
+		#print obwody

@@ -109,22 +109,22 @@ from django.http import Http404
 from time import sleep
 
 def zapytanie_ajax(request, nazwa_gminy):
-	print "ZAPYTANIE ", request.POST
+	#print "ZAPYTANIE ", request.POST
 	id = request.POST.get('id')
-	print id
+	#print id
 	obwod = get_object_or_404(Obwod, pk = id)
-	print obwod
+	#print obwod
 
 	response_data = {}
 	response_data['data_modyfikacji'] = wybory.daszek_common.datetime_to_string(obwod.data_modyfikacji)
 	response_data['kart_do_glosowania'] = obwod.kart_do_glosowania
 	response_data['wyborcow'] = obwod.wyborcow
-	print response_data
+	#print response_data
 	sleep(0.3)
 	return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 def zmiana_ajax(request, nazwa_gminy):
-	print "ZMIANA ", request.POST
+	#print "ZMIANA ", request.POST
 
 	sleep(0.5)
 
@@ -134,7 +134,7 @@ def zmiana_ajax(request, nazwa_gminy):
 	wyborcow = request.POST.get('wyborcow')
 
 	(e, u, m) = zmiana_obwodu(id, data_modyfikacji, kart_do_glosowania, wyborcow)
-	print (e, u, m)
+	#print (e, u, m)
 
 	response_data = {}
 
@@ -144,3 +144,5 @@ def zmiana_ajax(request, nazwa_gminy):
 		response_data['success'] = True
 
 	return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+# django unit test
