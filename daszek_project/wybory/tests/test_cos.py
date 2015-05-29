@@ -8,6 +8,7 @@ import django.core.urlresolvers
 import django.test
 
 from selenium import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
 import wybory.daszek_common
@@ -72,33 +73,59 @@ class ClientTests(django.test.TestCase):
 	def tearDown(self):
 		wybory.daszek_common.wipe_database()
 
-#TODO
 
-#class MySeleniumTests(django.test.LiveServerTestCase):
-	#def setUp(self):
-		#self.driver = webdriver.Firefox()
-		#self.driver_2 = webdriver.Firefox()
+def ajax_complete(driver):
+	try:
+		return 0 == driver.execute_script("return jQuery.active")
+	except WebDriverException:
+		pass
 
-	#def test_search_in_python_org(self):
-		#driver = self.driver
-		#driver.get("http://www.python.org")
+def compare_source(driver):
+	try:
+		return source != driver.page_source
+	except WebDriverException:
+		pass
+
+class MySeleniumTests(django.test.LiveServerTestCase):
+	def setUp(self):
+		self.driver = webdriver.Firefox()
+		self.nazwa_gminy = "gmina1"
+		self.nazwa_obwodu = "obwod11"
+		wybory.daszek_common.add_item(self.nazwa_gminy, self.nazwa_obwodu)
+		self.obwody_url = django.core.urlresolvers.reverse('wybory:obwody', kwargs = {'nazwa_gminy': self.nazwa_gminy})
+
+	def test_search_in_python_org(self):
+		driver = self.driver
+		driver.get(self.live_server_url + self.obwody_url)
 		#self.assertIn("Python", driver.title)
-		#elem = driver.find_element_by_name("q")
-		#elem.send_keys("pycon")
-		#elem.send_keys(Keys.RETURN)
-		#assert "No results found." not in driver.page_source
+		edit = driver.find_element_by_name('editbutton')
 
-		#driver_2 = self.driver
-		#driver_2.get("http://www.python.org")
-		#self.assertIn("Python", driver.title)
-		#elem = driver_2.find_element_by_name("q")
-		#elem.send_keys("pycon")
-		#elem.send_keys(Keys.RETURN)
-		#assert "No results found." in driver_2.page_source
+		hover = ActionChains(driver).move_to_element(edit)
+		hover.perform()
+		edit.click()
 
-	#def tearDown(self):
-		#self.driver.close()
-		#self.driver_2.close()
+		#TODO wait
+		wait = WebDriverWait(driver, 10)
+		element = wait.until(EC.visibility_of((By.Name,'editbutton')))
+
+		WebDriverWait(driver, 10).until(compare_source)
+		#WebDriverWait(driver, 10).until(ajax_complete,  "Timeout waiting for page to load")
+
+		field = driver.find_element_by_name("kart_do_glosowania")
+		field.send_keys("500")
+
+		submit = driver.find_element_by_name('placeholder2')
+		submit.click()
+
+		#TODO wait2
+		WebDriverWait(driver, 10).until(compare_source)
+
+		#TODO: check value is on DB
+		self.obwod = Obwod.objects.get(nazwa = self.nazwa_obwodu)
+		self.assertEquals(obwod.kart_do_glosowania, 500)
+
+	def tearDown(self):
+		self.driver.close()
 
 #class PythonOrgSearch(unittest.TestCase):
 
