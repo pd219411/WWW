@@ -19,6 +19,7 @@ from pokedex import views
 
 urlpatterns = [
     url(r'^$', views.showList, name='list'),
+    url(r'^pokemon/(?P<numer_pokemona>.+)/$', views.pokemon, name='pokemon'),
 
     url(r'^admin/', include(admin.site.urls)),
 ]

@@ -8,7 +8,7 @@
         <h1>Pokemony</h1>
         <ul>
             {% for p in pokemony %}
-            <li>#{{p.numer}} {{p.nazwa}}</li>
+            <li>#{{p.numer}} {{p.nazwa}} <a href="{% url 'pokemon' p.numer %}">{{ p.nazwa }}</a></li>
             {% endfor %}
         </ul>
     </body>

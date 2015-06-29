@@ -1,0 +1,13 @@
+<!doctype html>
+<h1>{{ pokemon.nazwa }}</h1>
+
+<div>Numer: {{ pokemon.numer }}</div>
+
+{% if ewolucja %}
+    <p><a href="{% url 'pokemon' ewolucja.numer %}">{{ pokemon.ewolucja }} {{ ewolucja }}</a></p>
+{% else %}
+	<p>Brak</p>
+{% endif %}
+
+<div>Atak1: {{ pokemon.rodzaj1 }}</div>
+<div>Atak2: {{ pokemon.rodzaj2 }} TODO CHECK</div> 
