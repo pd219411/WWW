@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^$', views.showList, name='list'),
     url(r'^pokemon/(?P<numer_pokemona>.+)/$', views.pokemon, name='pokemon'),
     url(r'^pokemon/(?P<numer_pokemona>.+)/komentarz$', views.komentarz, name='komentarz'),
+    url(r'^pokemon/(?P<numer_pokemona>.+)/oblicz$', views.oblicz_ajax, name='oblicz_ajax'),
 
     url(r'^admin/', include(admin.site.urls)),
 ]

@@ -17,6 +17,21 @@
 <div>Atak 1: {{ pokemon.rodzaj1 }}</div>
 {% if pokemon.rodzaj2 %}<div>Atak2: {{ pokemon.rodzaj2 }}</div>{% endif %}
 
+
+<div id="ajax-urls" data-query="{% url 'oblicz_ajax' pokemon.numer %}"</div>
+
+<select id="select">
+{% for atak in rodzaje %}
+<option value="{{ atak }}">{{ atak }}</option>
+{% endfor %}
+</select>
+<button name="oblicz">Oblicz modyfikator</button>
+<div>Modyfikator: <span id="wynik">-</span></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="{{ STATIC_URL }}/static/main.js"></script>
+
+
 <form action="{% url 'komentarz' pokemon.numer %}" method="post">
 <fieldset>
 {% csrf_token %}
