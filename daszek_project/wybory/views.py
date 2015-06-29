@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.views import generic
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Gmina, Obwod
 
 import wybory.daszek_common
@@ -14,8 +15,24 @@ class GminyView(generic.ListView):
 	template_name = 'gminy.html'
 	context_object_name = 'lista_gmin'
 
-	def get_queryset(self):
-		return Gmina.objects.all()
+	def get(self, request):
+		lista_gmin = Gmina.objects.all()
+		paginator = Paginator(lista_gmin, 10)
+
+		page_number = request.GET.get('page_number')
+		print request.GET
+
+		try:
+			mala_lista = paginator.page(page_number)
+		except PageNotAnInteger: # If page is not an integer, deliver first page.
+			mala_lista = paginator.page(1)
+		except EmptyPage: # If page is out of range, deliver last page of results.
+			mala_lista = paginator.page(paginator.num_pages)
+
+		return render(request, self.template_name, {self.context_object_name : mala_lista})
+
+	#def get_queryset(self):
+		#return Gmina.objects.all()
 
 def obwody(request, nazwa_gminy):
 	gmina = get_object_or_404(Gmina, pk = nazwa_gminy)

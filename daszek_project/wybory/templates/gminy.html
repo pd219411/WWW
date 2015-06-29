@@ -4,6 +4,22 @@
 		<li><a href="{% url 'wybory:obwody' gmina.nazwa %}">{{ gmina.nazwa }}</a></li>
 	{% endfor %}
 	</ul>
+
+	<div class="pagination">
+	<span class="step-links">
+		{% if lista_gmin.has_previous %}
+			<a href="?page_number={{ lista_gmin.previous_page_number }}">previous</a>
+		{% endif %}
+
+		<span class="current">
+			Page {{ lista_gmin.number }} of {{ lista_gmin.paginator.num_pages }}.
+		</span>
+
+		{% if lista_gmin.has_next %}
+			<a href="?page_number={{ lista_gmin.next_page_number }}">next</a>
+		{% endif %}
+	</span>
+</div>
 {% else %}
 	<p>Brak gmin!</p>
 {% endif %}
