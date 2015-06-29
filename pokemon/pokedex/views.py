@@ -25,8 +25,6 @@ def pokemon(request, numer_pokemona):
     for atak in ataki:
         rodzaje.add(atak.atak)
 
-    #print "AKTAKI", rodzaje
-
     return render(request, 'pokemon.html', { 'pokemon' : pokemon, 'ewolucja' : ewolucja, 'komentarze' : komentarze, 'rodzaje' : rodzaje })
 
 def komentarz(request, numer_pokemona):
@@ -34,7 +32,6 @@ def komentarz(request, numer_pokemona):
 
     pseudonim = request.POST.get('pseudonim')
     komentarz = request.POST.get('komentarz')
-    #print "DASZEK POST: ", request.POST, " ****** ", pseudonim, " ][ ", komentarz
 
     lista_bledow = []
 
@@ -57,9 +54,7 @@ def komentarz(request, numer_pokemona):
         return HttpResponseRedirect(reverse('pokemon', kwargs = { 'numer_pokemona': numer_pokemona }))
 
 def oblicz_ajax(request, numer_pokemona):
-    print "AJAX: ", request.POST
     rodzaj = request.POST.get('rodzaj_ataku')
-    print rodzaj
 
     pokemon = get_object_or_404(Pokemon, pk = numer_pokemona)
 
@@ -75,8 +70,6 @@ def oblicz_ajax(request, numer_pokemona):
         skutecznosc *= skutecznosc1.mnoznik
     except ObjectDoesNotExist:
         pass
-
-    print "SK", skutecznosc
 
     response_data = {}
     response_data['mnoznik'] = 'x' + str(skutecznosc)

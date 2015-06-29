@@ -1,5 +1,10 @@
 Udało się zrobić:
 - listę pokemonów z odnośnikami
-- strone pokemona
+- stronę pokemona
+- admina i ładne printy
 - formularz z komentarzami
-- obliczanie mnoznika w ajaxie
+- obliczanie mnożnika w ajaxie
+
+Nie udało się zrobić:
+- migracji
+- css
