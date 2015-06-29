@@ -16,7 +16,7 @@ def pokemon(request, numer_pokemona):
         ewolucja = None
 
     komentarze = Komentarz.objects.filter(pokemon = pokemon).order_by('-data')
-    print "KOM", komentarze
+
     return render(request, 'pokemon.html', { 'pokemon' : pokemon, 'ewolucja' : ewolucja, 'komentarze' : komentarze })
 
 def komentarz(request, numer_pokemona):
@@ -27,12 +27,19 @@ def komentarz(request, numer_pokemona):
     print "DASZEK POST: ", request.POST, " ****** ", pseudonim, " ][ ", komentarz
 
     lista_bledow = []
-    try:
-        pokemon = Pokemon.objects.get(numer = numer_pokemona)
-        komentarz = Komentarz(pokemon = pokemon, pseudonim = pseudonim, tresc = komentarz)
-        komentarz.save()
-    except ObjectDoesNotExist:
-        lista_bledow += "Bledny numer pokemona"
+
+    if len(pseudonim) < 1:
+        lista_bledow.append("Pusty pseudonim")
+    if len(komentarz) < 1:
+        lista_bledow.append("Pusty komentarz")
+
+    if len(lista_bledow) < 1:
+        try:
+            pokemon = Pokemon.objects.get(numer = numer_pokemona)
+            komentarz = Komentarz(pokemon = pokemon, pseudonim = pseudonim, tresc = komentarz)
+            komentarz.save()
+        except ObjectDoesNotExist:
+            lista_bledow.append("Bledny numer pokemona")
 
     if len(lista_bledow) > 0:
         return render(request, 'komentarz.html', { 'numer_pokemona': numer_pokemona, 'lista_bledow' : lista_bledow })
