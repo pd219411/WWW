@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Lista pokemonów</title>
+    </head>
+    <body>
+        <h1>Pokemony</h1>
+        <ul>
+            {% for p in pokemony %}
+            <li>#{{p.numer}} {{p.nazwa}}</li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>

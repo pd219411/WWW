@@ -1,0 +1,2 @@
+Pobrane z https://github.com/veekun/pokedex/tree/master/pokedex/data/csv
+type_names_pl.csv stworzone ręcznie.
