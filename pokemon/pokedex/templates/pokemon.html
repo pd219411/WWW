@@ -1,4 +1,10 @@
 <!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Lista pokemonów</title>
+    </head>
+    <body>
 <h1>{{ pokemon.nazwa }}</h1>
 
 <div>Numer: {{ pokemon.numer }}</div>
@@ -10,3 +16,24 @@
 
 <div>Atak 1: {{ pokemon.rodzaj1 }}</div>
 {% if pokemon.rodzaj2 %}<div>Atak2: {{ pokemon.rodzaj2 }}</div>{% endif %}
+
+<form action="{% url 'komentarz' pokemon.numer %}" method="post">
+<fieldset>
+{% csrf_token %}
+<div>Pseudonim:</div>
+<input type="text" name="pseudonim" value="">
+<div>Treść:</div>
+<textarea name="komentarz"></textarea>
+<input type="submit" value="Dodaj komentarz" />
+</fieldset>
+</form>
+
+<div>Komentarze:</div>
+<ul>
+{% for komentarz in komentarze %}
+<li><div>{{ komentarz.data}} {{ komentarz.pseudonim }}:</div>{{ komentarz.tresc }}</li>
+{% endfor %}
+</ul>
+
+    </body>
+</html>

@@ -18,3 +18,11 @@ class Skutecznosc(models.Model):
         return self.atak + ' x ' + self.obrona + ' (x' + str(self.mnoznik) + ')'
     class Meta:
         unique_together = ('atak', 'obrona')
+
+class Komentarz(models.Model):
+    pokemon = models.ForeignKey(Pokemon)
+    data = models.DateTimeField(auto_now = True)
+    pseudonim = models.CharField(max_length=32)
+    tresc = models.TextField()
+    def __unicode__(self):
+        return self.pseudonim + " : " + self.tresc + " " + str(self.data)
